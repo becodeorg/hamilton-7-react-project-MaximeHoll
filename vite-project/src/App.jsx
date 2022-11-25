@@ -12,9 +12,13 @@ function App() {
 
   const [timer, setTimer] = useState(initialTimer);
 
+  const [startStop, setStartStop] = useState("play");
+
   const [launchTimer, setLaunchTimer] = useState(false);
 
   const [launchAlert, setLaunchAlert] = useState(false);
+
+  const [check, setCheck] = useState(false);
 
   const [hidden, setHidden] = useState("hidden");
 
@@ -24,7 +28,7 @@ function App() {
 
   if(timer.minutes < 99) {
 
-  let changeTime = {minutes: minutes, seconds: 5};
+  let changeTime = {minutes: minutes , seconds: 5};
   setTimer(changeTime);
   }
 
@@ -46,23 +50,38 @@ function App() {
   }  
 
   
+  const startStopTimer = () => {
+    setLaunchTimer(!launchTimer)
+    if(startStop === "play") {
+    setStartStop("stop")
+  } else if (startStop === "stop") {
+    setStartStop("play")
+  }
+  }
   
     useEffect(() => {
-      if(launchTimer === true && (timer.minutes + timer.seconds != 0)) {
+      if(launchTimer === true) {
       const interval = setInterval(() => {
         
         let changeTime = {minutes: timer.seconds === 0 ? timer.minutes - 1 : timer.minutes , seconds: timer.seconds === 0 ? timer.seconds + 59 : timer.seconds - 1};
         setTimer(changeTime);
         setLaunchAlert(true);
+        alertModal()
       
     }, 1000);
+      
       return () => clearInterval(interval);}
       
     });
+
   
-    if(launchAlert === true && (timer.minutes + timer.seconds === 0)) {
-      // setLaunchTimer(false);
-      // setHidden("");
+    function alertModal() {
+    if(launchAlert === true && (timer.minutes ===0 && timer.seconds === 1)) {
+      setLaunchTimer(false);
+      let changeTime = {minutes: 0 , seconds: 0};
+      setTimer(changeTime);
+      setHidden("")
+    } 
     }
 
   return (
@@ -72,7 +91,7 @@ function App() {
         <Time minutes={timer.minutes < 10 ? `0${ timer.minutes }` : timer.minutes} seconds={timer.seconds < 10 ? `0${ timer.seconds }` : timer.seconds}/>
         <div className='flex flex-col w-1/4 bg-slate-300'>
           <button className='h-1/4 border-black border-2' onClick={() => addTime(timer.minutes)}>+</button>
-          <button className='h-1/4 border-black border-2' onClick={() => setLaunchTimer(!launchTimer)}>play</button>
+          <button className='h-1/4 border-black border-2' onClick={() => startStopTimer()}>{startStop}</button>
           <button className='h-1/4 border-black border-2' onClick={() => resetTime()}>reset</button>
           <button className='h-1/4 border-black border-2' onClick={() => removeTime(timer.minutes)}>-</button>
         </div>
