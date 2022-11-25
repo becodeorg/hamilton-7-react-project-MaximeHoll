@@ -6,11 +6,8 @@ import Modal from './components/Modal';
 
 function App() {
 
-  
 
-  const initialTimer = {minutes: 0, seconds: 0};
-
-  const [timer, setTimer] = useState(initialTimer);
+  const [timer, setTimer] = useState({minutes: 25, seconds: 0});
 
   const [startStop, setStartStop] = useState("play");
 
@@ -18,17 +15,15 @@ function App() {
 
   const [launchAlert, setLaunchAlert] = useState(false);
 
-  const [check, setCheck] = useState(false);
-
   const [hidden, setHidden] = useState("hidden");
 
   console.log(launchTimer);
 
   const addTime = (minutes) => {
 
-  if(timer.minutes < 99) {
+  if(timer.minutes < 99 && launchTimer === false) {
 
-  let changeTime = {minutes: minutes , seconds: 5};
+  let changeTime = {minutes: minutes +1, seconds: 0};
   setTimer(changeTime);
   }
 
@@ -37,7 +32,7 @@ function App() {
 
   const  removeTime = (minutes) => {
 
-    if(timer.minutes > 0) {
+    if(timer.minutes > 0 && launchTimer === false) {
 
     let changeTime = {minutes: minutes - 1, seconds: 0};
   
@@ -47,6 +42,8 @@ function App() {
   const resetTime = () => {
     let changeTime = {minutes: 0, seconds: 0};
     setTimer(changeTime);
+    setLaunchTimer(false);
+    setStartStop("play");
   }  
 
   
@@ -60,7 +57,7 @@ function App() {
   }
   
     useEffect(() => {
-      if(launchTimer === true) {
+      if(launchTimer === true && (timer.minutes + timer.seconds != 0)) {
       const interval = setInterval(() => {
         
         let changeTime = {minutes: timer.seconds === 0 ? timer.minutes - 1 : timer.minutes , seconds: timer.seconds === 0 ? timer.seconds + 59 : timer.seconds - 1};
@@ -78,16 +75,25 @@ function App() {
     function alertModal() {
     if(launchAlert === true && (timer.minutes ===0 && timer.seconds === 1)) {
       setLaunchTimer(false);
+      setStartStop("play");
       let changeTime = {minutes: 0 , seconds: 0};
       setTimer(changeTime);
       setHidden("")
     } 
     }
 
+    function closeModal () {
+      setHidden("hidden");
+    }
+
+    function newTimer() {
+      window.location.reload(true); 
+    }
+
   return (
-    <div className="App bg-slate-400 h-screen w-screen flex flex-col align-center content-center pt-10">
-      <Modal hidden={hidden}/>
-     <div className="border-black bg-white border-3 flex h-1/6 w-4/5 ml-auto mr-auto mt-auto mb-auto">
+    <div className="App bg-slate-400 h-screen w-screen flex flex-col align-center content-center pt-10 font-mono">
+      <Modal hidden={hidden} closeModal={closeModal} newTimer={newTimer}/>
+     <div className="border-black bg-white border-3 flex h-1/6 w-96 m-auto">
         <Time minutes={timer.minutes < 10 ? `0${ timer.minutes }` : timer.minutes} seconds={timer.seconds < 10 ? `0${ timer.seconds }` : timer.seconds}/>
         <div className='flex flex-col w-1/4 bg-slate-300'>
           <button className='h-1/4 border-black border-2' onClick={() => addTime(timer.minutes)}>+</button>
