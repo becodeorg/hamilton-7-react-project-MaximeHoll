@@ -40,7 +40,7 @@ function App() {
   }
 
   const resetTime = () => {
-    let changeTime = {minutes: 0, seconds: 0};
+    let changeTime = {minutes: 25, seconds: 0};
     setTimer(changeTime);
     setLaunchTimer(false);
     setStartStop("play");
@@ -48,12 +48,13 @@ function App() {
 
   
   const startStopTimer = () => {
+    if (timer.minutes + timer.seconds != 0) {
     setLaunchTimer(!launchTimer)
     if(startStop === "play") {
     setStartStop("stop")
   } else if (startStop === "stop") {
     setStartStop("play")
-  }
+  }}
   }
   
     useEffect(() => {
